@@ -2,3 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+.t-regular {
+    font-family: "DM Serif Text", serif;
+    font-style: normal;
+  }
+  
+  .t-italic {
+    font-family: "DM Serif Text", serif;
+    font-style: italic;
+  }
+  
