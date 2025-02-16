@@ -10,7 +10,7 @@ import OnlineRecipes from "./components/OnlineRecepies";
 function App() {
   return (
     <Router>
-      <div className="App w-full h-full absolute bg-gradient-to-r from-teal-500 to-red-100">
+      <div className="App w-full min-h-screen absolute bg-gradient-to-r from-teal-500 to-red-100">
         {/* Header Component */}
         <Header />
 

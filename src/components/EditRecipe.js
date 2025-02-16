@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { TrashIcon } from "@heroicons/react/24/solid";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function EditRecipe() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { id } = location.state || {};
 
   const [details, setDetails] = useState({
-    Title: "",
-    Ingredients: [],
-    StepstoFollow: "",
+    title: "",
+    ingredients: [],
+    steps: "",
   });
 
   const [ingredient, setIngredient] = useState({
@@ -19,18 +20,11 @@ function EditRecipe() {
   });
 
   useEffect(() => {
-    // Mock fetching the recipe data using the ID
     if (id) {
-      const fetchedRecipe = {
-        id,
-        Title: "Mock Recipe Title",
-        Ingredients: [
-          { name: "Flour", quantity: "2", unit: "cups" },
-          { name: "Sugar", quantity: "1", unit: "cup" },
-        ],
-        StepstoFollow: "Mock Steps",
-      };
-      setDetails(fetchedRecipe);
+      fetch(`http://localhost:5000/recipes/${id}`)
+        .then((response) => response.json())
+        .then((data) => setDetails(data))
+        .catch((error) => console.error("Error fetching recipe:", error));
     }
   }, [id]);
 
@@ -48,7 +42,7 @@ function EditRecipe() {
     if (ingredient.name && ingredient.quantity && ingredient.unit) {
       setDetails((prev) => ({
         ...prev,
-        Ingredients: [...prev.Ingredients, ingredient],
+        ingredients: [...prev.ingredients, ingredient],
       }));
       setIngredient({ name: "", quantity: "", unit: "" });
     }
@@ -57,13 +51,29 @@ function EditRecipe() {
   const removeIngredient = (index) => {
     setDetails((prev) => ({
       ...prev,
-      Ingredients: prev.Ingredients.filter((_, i) => i !== index),
+      ingredients: prev.ingredients.filter((_, i) => i !== index),
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Updated Recipe:", details);
+    try {
+      const response = await fetch(`http://localhost:5000/recepies/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(details),
+      });
+      if (response.ok) {
+        console.log("Recipe updated successfully");
+        navigate("/"); // Redirect after updating
+      } else {
+        console.error("Error updating recipe");
+      }
+    } catch (error) {
+      console.error("Error submitting recipe update:", error);
+    }
   };
 
   return (
@@ -72,25 +82,23 @@ function EditRecipe() {
         Edit Recipe
       </h3>
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Title */}
         <div>
-          <label htmlFor="Title" className="block text-lg font-semibold text-gray-700">
+          <label htmlFor="title" className="block text-lg font-semibold text-gray-700">
             Title:
           </label>
           <input
-            id="Title"
-            name="Title"
+            id="title"
+            name="title"
             type="text"
-            value={details.Title}
+            value={details.title}
             onChange={handleChange}
             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:outline-none"
           />
         </div>
 
-        {/* Ingredients */}
         <div>
           <label
-            htmlFor="Ingredients"
+            htmlFor="ingredients"
             className="block text-lg font-semibold text-gray-700"
           >
             Ingredients:
@@ -129,7 +137,7 @@ function EditRecipe() {
             </button>
           </div>
           <ul className="mt-4 list-disc pl-6">
-            {details.Ingredients.map((ing, index) => (
+            {details.ingredients.map((ing, index) => (
               <li key={index} className="flex items-center justify-between">
                 <span>
                   {ing.name}: {ing.quantity} {ing.unit}
@@ -146,25 +154,23 @@ function EditRecipe() {
           </ul>
         </div>
 
-        {/* Steps */}
         <div>
           <label
-            htmlFor="StepstoFollow"
+            htmlFor="steps"
             className="block text-lg font-semibold text-gray-700"
           >
             Steps to Follow:
           </label>
           <textarea
-            id="StepstoFollow"
-            name="StepstoFollow"
+            id="steps"
+            name="steps"
             rows="4"
-            value={details.StepstoFollow}
+            value={details.steps}
             onChange={handleChange}
             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:outline-none"
           ></textarea>
         </div>
 
-        {/* Submit Button */}
         <button
           type="submit"
           className="w-full bg-blue-500 hover:bg-blue-400 text-white font-semibold py-2 px-4 rounded-lg"

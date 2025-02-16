@@ -1,54 +1,41 @@
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/solid";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 function ListRecipes() {
-  const [recipes, setRecipes] = useState([
-    {
-      id: 1,
-      Title: "Pasta",
-      Ingredients: [
-        { name: "Flour", quantity: 2, unit: "cups" },
-        { name: "Eggs", quantity: 3, unit: "" },
-      ],
-      Steps: "Mix and cook",
-    },
-    {
-      id: 2,
-      Title: "Pizza",
-      Ingredients: [
-        { name: "Flour", quantity: 3, unit: "cups" },
-        { name: "Cheese", quantity: 1, unit: "block" },
-      ],
-      Steps: "Prepare dough and bake",
-    },
-    {
-      id: 3,
-      Title: "Salad",
-      Ingredients: [
-        { name: "Lettuce", quantity: 1, unit: "head" },
-        { name: "Tomato", quantity: 2, unit: "" },
-      ],
-      Steps: "Mix ingredients",
-    },
-  ]);
-
+  const [recipes, setRecipes] = useState([]);
   const navigate = useNavigate();
 
-  // Function to delete a recipe
-  const handleDelete = (id) => {
-    const updatedRecipes = recipes.filter((recipe) => recipe.id !== id);
-    setRecipes(updatedRecipes);
-    console.log(`Recipe with ID ${id} deleted`);
+  const fetchRecipes = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/recipes");
+      const data = await response.json();
+      setRecipes(data);
+    } catch (error) {
+      console.error("Error fetching recipes:", error);
+    }
   };
 
-  // Function to navigate to the edit page
+  useEffect(() => {
+    fetchRecipes();
+  }, []);
+
+  const handleDelete = async (id) => {
+    try {
+      await fetch(`http://localhost:5000/recepies/${id}`, { method: "DELETE" });
+      setRecipes((prevRecipes) => prevRecipes.filter((recipe) => recipe.id !== id));
+      console.log(`Recipe with ID ${id} deleted`);
+    } catch (error) {
+      console.error("Error deleting recipe:", error);
+    }
+  };
+
   const handleEdit = (id) => {
     navigate(`/EditRecipe`, { state: { id } });
   };
 
   return (
-    <div className="shadow-lg w-3/4 self-center md:mx-auto my-6 mt-4 pb-6 pt-24 pl-6 m-6">
+    <div className="shadow-lg w-3/4 self-center md:mx-auto my-6 mt-4 pb-6 pt-24 pl-6 pr-4 m-6">
       <h3 className="block mb-4 text-2xl font-medium text-gray-900 dark:text-white">
         Recipes List
       </h3>
@@ -58,11 +45,11 @@ function ListRecipes() {
             key={recipe.id}
             className="p-4 border rounded-lg shadow bg-white"
           >
-            <h4 className="text-lg font-semibold">{recipe.Title}</h4>
+            <h4 className="text-lg font-semibold">{recipe.title}</h4>
             <div>
               <strong>Ingredients:</strong>
               <ul className="list-disc pl-6 mt-2">
-                {recipe.Ingredients.map((ingredient, index) => (
+                {recipe.ingredients.map((ingredient, index) => (
                   <li key={index} className="text-gray-700">
                     {ingredient.name}: {ingredient.quantity} {ingredient.unit}
                   </li>
@@ -70,7 +57,7 @@ function ListRecipes() {
               </ul>
             </div>
             <p className="mt-4">
-              <strong>Steps:</strong> {recipe.Steps}
+              <strong>Steps:</strong> {recipe.steps}
             </p>
             <div className="mt-4 space-x-4">
               <button
