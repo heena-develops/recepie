@@ -85,9 +85,9 @@ function AddRecipe() {
         <div className="space-y-2">
           <label className="block text-lg font-semibold text-gray-700">Ingredients:</label>
           <div className="flex gap-4">
-            <input name="name" type="text" className="flex-1 p-3 border rounded-lg" placeholder="Ingredient name" value={ingredient.name} onChange={handleIngredientChange} />
-            <input name="quantity" type="number" className="flex-1 p-3 border rounded-lg" placeholder="Quantity" value={ingredient.quantity} onChange={handleIngredientChange} />
-            <input name="unit" type="text" className="flex-1 p-3 border rounded-lg" placeholder="Unit" value={ingredient.unit} onChange={handleIngredientChange} />
+            <input name="name" type="text" className="flex-1 w-1/3 p-3 border rounded-lg" placeholder="Ingredient name" value={ingredient.name} onChange={handleIngredientChange} />
+            <input name="quantity" type="number" className="flex-1 w-1/3 p-3 border rounded-lg" placeholder="Quantity" value={ingredient.quantity} onChange={handleIngredientChange} />
+            <input name="unit" type="text" className="flex-1 p-3 w-1/3 border rounded-lg" placeholder="Unit" value={ingredient.unit} onChange={handleIngredientChange} />
             <button type="button" onClick={addIngredient} className="bg-yellow-500 text-white py-2 px-4 rounded-lg">Add</button>
           </div>
           <ul className="mt-4 list-disc pl-6">

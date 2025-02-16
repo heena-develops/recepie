@@ -35,7 +35,7 @@ function ListRecipes() {
   };
 
   return (
-    <div className="shadow-lg w-3/4 self-center md:mx-auto my-6 mt-4 pb-6 pt-24 pl-6 m-6">
+    <div className="shadow-lg w-3/4 self-center md:mx-auto my-6 mt-4 pb-6 pt-24 pl-6 pr-4 m-6">
       <h3 className="block mb-4 text-2xl font-medium text-gray-900 dark:text-white">
         Recipes List
       </h3>
